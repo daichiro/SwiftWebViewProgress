@@ -3,7 +3,7 @@
 //  SwiftWebViewProgress
 //
 //  Created by Daichi Ichihara on 2014/12/03.
-//  Copyright (c) 2014年 MokuMokuCloud. All rights reserved.
+//  Copyright (c) 2014 MokuMokuCloud. All rights reserved.
 //
 
 import UIKit
