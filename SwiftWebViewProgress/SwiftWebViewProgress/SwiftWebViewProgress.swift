@@ -150,7 +150,7 @@ class WebViewProgress: NSObject, UIWebViewDelegate {
         }
         
         loadingCount = loadingCount - 1
-        incrementProgress()
+        // incrementProgress()
         
         let readyState = webView.stringByEvaluatingJavaScriptFromString("document.readyState")
         

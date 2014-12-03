@@ -13,6 +13,7 @@ class ViewController: UIViewController, UIWebViewDelegate, WebViewProgressDelega
     private var progressView: WebViewProgressView!
     private var progressProxy: WebViewProgress!
 
+    // MARK: LifeCycle
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
@@ -43,12 +44,13 @@ class ViewController: UIViewController, UIWebViewDelegate, WebViewProgressDelega
         self.navigationController!.navigationBar.addSubview(progressView)
     }
     
-    func loadApple() {
+    // MARK: Private Method
+    private func loadApple() {
         let request = NSURLRequest(URL: NSURL(string: "http://apple.com")!)
         webView.loadRequest(request)
     }
     
-    // MARK: WebViewProgressDelegate
+    // MARK: - WebViewProgressDelegate
     func webViewProgress(webViewProgress: WebViewProgress, updateProgress progress: Float) {
         progressView.setProgress(progress, animated: true)
     }
