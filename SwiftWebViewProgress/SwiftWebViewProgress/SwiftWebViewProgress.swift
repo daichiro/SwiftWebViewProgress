@@ -76,7 +76,10 @@ class WebViewProgress: NSObject, UIWebViewDelegate {
     
     // MARK: - UIWebViewDelegate
     func webView(webView: UIWebView, shouldStartLoadWithRequest request: NSURLRequest, navigationType: UIWebViewNavigationType) -> Bool {
-        if request.URL.path == completePRCURLPath {
+        guard let url = request.URL else {
+            return false
+        }
+        if url.path == completePRCURLPath {
             completeProgress()
             return false
         }
@@ -87,13 +90,13 @@ class WebViewProgress: NSObject, UIWebViewDelegate {
         }
         
         var isFragmentJump = false
-        if let fragmentURL = request.URL.fragment {
-            let nonFragmentURL = request.URL.absoluteString?.stringByReplacingOccurrencesOfString("#"+fragmentURL, withString: "")
-            isFragmentJump = nonFragmentURL == webView.request!.URL.absoluteString
+        if let fragmentURL = url.fragment {
+            let nonFragmentURL = url.absoluteString.stringByReplacingOccurrencesOfString("#"+fragmentURL, withString: "")
+            isFragmentJump = nonFragmentURL == webView.request!.URL!.absoluteString
         }
         
-        var isTopLevelNavigation = request.mainDocumentURL! == request.URL
-        var isHTTP = request.URL.scheme == "http" || request.URL.scheme == "https"
+        let isTopLevelNavigation = request.mainDocumentURL! == request.URL
+        let isHTTP = url.scheme == "http" || url.scheme == "https"
         if ret && !isFragmentJump && isHTTP && isTopLevelNavigation {
             currentUrl = request.URL
             reset()
