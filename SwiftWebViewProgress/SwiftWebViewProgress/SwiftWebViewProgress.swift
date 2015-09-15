@@ -45,7 +45,7 @@ class WebViewProgress: NSObject, UIWebViewDelegate {
     
     private func incrementProgress() {
         var progress = self.progress
-        var maxProgress = interactive == true ? FinalProgressValue : InteractiveProgressValue
+        let maxProgress = interactive == true ? FinalProgressValue : InteractiveProgressValue
         
         let remainPercent = Float(loadingCount / maxLoadCount)
         let increment = (maxProgress - progress) / remainPercent
@@ -59,10 +59,11 @@ class WebViewProgress: NSObject, UIWebViewDelegate {
     }
     
     private func setProgress(progress: Float) {
-        if progress > self.progress || progress == 0 {
-            self.progress = progress
-            progressDelegate?.webViewProgress(self, updateProgress: progress)
+        guard progress > self.progress || progress == 0 else {
+            return
         }
+        self.progress = progress
+        progressDelegate?.webViewProgress(self, updateProgress: progress)
     }
     
     // MARK: Public Method
@@ -120,7 +121,7 @@ class WebViewProgress: NSObject, UIWebViewDelegate {
         
         let readyState = webView.stringByEvaluatingJavaScriptFromString("document.readyState")
         
-        var interactive = readyState == "interactive"
+        let interactive = readyState == "interactive"
         if interactive {
             self.interactive = true
             let waitForCompleteJS = "window.addEventListener('load',function() { var iframe = document.createElement('iframe'); iframe.style.display = 'none'; iframe.src = '\(webView.request?.mainDocumentURL?.scheme)://\(webView.request?.mainDocumentURL?.host)\(completePRCURLPath)'; document.body.appendChild(iframe);  }, false);"
@@ -138,13 +139,13 @@ class WebViewProgress: NSObject, UIWebViewDelegate {
             isNotRedirect = false
         }
         
-        var complete = readyState == "complete"
+        let complete = readyState == "complete"
         if complete && isNotRedirect {
             completeProgress()
         }
     }
     
-    func webView(webView: UIWebView, didFailLoadWithError error: NSError) {
+    func webView(webView: UIWebView, didFailLoadWithError error: NSError?) {
         if webViewProxyDelegate!.respondsToSelector("webView:didFailLoadWithError:") {
             webViewProxyDelegate!.webView!(webView, didFailLoadWithError: error)
         }
@@ -154,7 +155,7 @@ class WebViewProgress: NSObject, UIWebViewDelegate {
         
         let readyState = webView.stringByEvaluatingJavaScriptFromString("document.readyState")
         
-        var interactive = readyState == "interactive"
+        let interactive = readyState == "interactive"
         if interactive {
             self.interactive = true
             let waitForCompleteJS = "window.addEventListener('load',function() { var iframe = document.createElement('iframe'); iframe.style.display = 'none'; iframe.src = '\(webView.request?.mainDocumentURL?.scheme)://\(webView.request?.mainDocumentURL?.host)\(completePRCURLPath)'; document.body.appendChild(iframe);  }, false);"
@@ -172,7 +173,7 @@ class WebViewProgress: NSObject, UIWebViewDelegate {
             isNotRedirect = false
         }
         
-        var complete = readyState == "complete"
+        let complete = readyState == "complete"
         if complete && isNotRedirect {
             completeProgress()
         }

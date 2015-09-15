@@ -29,7 +29,7 @@ class ViewController: UIViewController, UIWebViewDelegate, WebViewProgressDelega
         let navigationBarBounds = self.navigationController!.navigationBar.bounds
         let barFrame = CGRect(x: 0, y: navigationBarBounds.size.height - progressBarHeight, width: navigationBarBounds.width, height: progressBarHeight)
         progressView = WebViewProgressView(frame: barFrame)
-        progressView.autoresizingMask = .FlexibleWidth | .FlexibleTopMargin
+        progressView.autoresizingMask = [.FlexibleWidth, .FlexibleTopMargin]
         
         loadApple()
     }
