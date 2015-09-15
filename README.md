@@ -10,11 +10,11 @@ This is nearly porting NJKWebViewProgress to Swift.
 
 ## Requirements
 - iOS7 or later
-- Xcode6.1 or later (Swift 1.1)
+- Xcode7 GM or later (Swift 2.0)
 
 ## Install
 - import `SwiftWebViewProgress.swift` in your Project.
-- (Optionally, import `SwiftWebViewProgressView.swift` 
+- (Optionally, import `SwiftWebViewProgressView.swift`
 
 ## Usage
 ```
@@ -34,4 +34,3 @@ func webViewProgress(webViewProgress: WebViewProgress, updateProgress progress: 
 
 ## License
 MIT license.
-
