@@ -46,9 +46,8 @@ class WebViewProgress: NSObject, UIWebViewDelegate {
     private func incrementProgress() {
         var progress = self.progress
         let maxProgress = interactive == true ? FinalProgressValue : InteractiveProgressValue
-        
-        let remainPercent = Float(loadingCount / maxLoadCount)
-        let increment = (maxProgress - progress) / remainPercent
+        let remainPercent = Float(Float(loadingCount) / Float(maxLoadCount))
+        let increment = (maxProgress - progress) * remainPercent
         progress += increment
         progress = fmin(progress, maxProgress)
         setProgress(progress)
@@ -120,7 +119,7 @@ class WebViewProgress: NSObject, UIWebViewDelegate {
         }
         
         loadingCount = loadingCount - 1
-        // incrementProgress()
+        incrementProgress()
         
         let readyState = webView.stringByEvaluatingJavaScriptFromString("document.readyState")
         
@@ -131,13 +130,9 @@ class WebViewProgress: NSObject, UIWebViewDelegate {
             webView.stringByEvaluatingJavaScriptFromString(waitForCompleteJS)
         }
         
-        var isNotRedirect: Bool
-        if let _currentUrl = currentUrl {
-            if _currentUrl == webView.request?.mainDocumentURL {
-                isNotRedirect = true
-            } else {
-                isNotRedirect = false
-            }
+        let isNotRedirect: Bool
+        if let currentUrl = currentUrl {
+            isNotRedirect = currentUrl == webView.request?.mainDocumentURL
         } else {
             isNotRedirect = false
         }
@@ -154,7 +149,7 @@ class WebViewProgress: NSObject, UIWebViewDelegate {
         }
         
         loadingCount = loadingCount - 1
-        // incrementProgress()
+        incrementProgress()
         
         let readyState = webView.stringByEvaluatingJavaScriptFromString("document.readyState")
         
@@ -165,13 +160,9 @@ class WebViewProgress: NSObject, UIWebViewDelegate {
             webView.stringByEvaluatingJavaScriptFromString(waitForCompleteJS)
         }
         
-        var isNotRedirect: Bool
-        if let _currentUrl = currentUrl {
-            if _currentUrl == webView.request?.mainDocumentURL {
-                isNotRedirect = true
-            } else {
-                isNotRedirect = false
-            }
+        let isNotRedirect: Bool
+        if let currentUrl = currentUrl {
+            isNotRedirect = currentUrl == webView.request?.mainDocumentURL
         } else {
             isNotRedirect = false
         }
