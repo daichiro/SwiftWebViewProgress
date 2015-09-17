@@ -45,10 +45,9 @@ class WebViewProgress: NSObject, UIWebViewDelegate {
     
     private func incrementProgress() {
         var progress = self.progress
-        var maxProgress = interactive == true ? FinalProgressValue : InteractiveProgressValue
-        
-        let remainPercent = Float(loadingCount / maxLoadCount)
-        let increment = (maxProgress - progress) / remainPercent
+        let maxProgress = interactive == true ? FinalProgressValue : InteractiveProgressValue
+        let remainPercent = Float(Float(loadingCount) / Float(maxLoadCount))
+        let increment = (maxProgress - progress) * remainPercent
         progress += increment
         progress = fmin(progress, maxProgress)
         setProgress(progress)
@@ -59,10 +58,11 @@ class WebViewProgress: NSObject, UIWebViewDelegate {
     }
     
     private func setProgress(progress: Float) {
-        if progress > self.progress || progress == 0 {
-            self.progress = progress
-            progressDelegate?.webViewProgress(self, updateProgress: progress)
+        guard progress > self.progress || progress == 0 else {
+            return
         }
+        self.progress = progress
+        progressDelegate?.webViewProgress(self, updateProgress: progress)
     }
     
     // MARK: Public Method
@@ -75,7 +75,10 @@ class WebViewProgress: NSObject, UIWebViewDelegate {
     
     // MARK: - UIWebViewDelegate
     func webView(webView: UIWebView, shouldStartLoadWithRequest request: NSURLRequest, navigationType: UIWebViewNavigationType) -> Bool {
-        if request.URL.path == completePRCURLPath {
+        guard let url = request.URL else {
+            return false
+        }
+        if url.path == completePRCURLPath {
             completeProgress()
             return false
         }
@@ -86,13 +89,13 @@ class WebViewProgress: NSObject, UIWebViewDelegate {
         }
         
         var isFragmentJump = false
-        if let fragmentURL = request.URL.fragment {
-            let nonFragmentURL = request.URL.absoluteString?.stringByReplacingOccurrencesOfString("#"+fragmentURL, withString: "")
-            isFragmentJump = nonFragmentURL == webView.request!.URL.absoluteString
+        if let fragmentURL = url.fragment {
+            let nonFragmentURL = url.absoluteString.stringByReplacingOccurrencesOfString("#"+fragmentURL, withString: "")
+            isFragmentJump = nonFragmentURL == webView.request!.URL!.absoluteString
         }
         
-        var isTopLevelNavigation = request.mainDocumentURL! == request.URL
-        var isHTTP = request.URL.scheme == "http" || request.URL.scheme == "https"
+        let isTopLevelNavigation = request.mainDocumentURL! == request.URL
+        let isHTTP = url.scheme == "http" || url.scheme == "https"
         if ret && !isFragmentJump && isHTTP && isTopLevelNavigation {
             currentUrl = request.URL
             reset()
@@ -116,63 +119,55 @@ class WebViewProgress: NSObject, UIWebViewDelegate {
         }
         
         loadingCount = loadingCount - 1
-        // incrementProgress()
+        incrementProgress()
         
         let readyState = webView.stringByEvaluatingJavaScriptFromString("document.readyState")
         
-        var interactive = readyState == "interactive"
+        let interactive = readyState == "interactive"
         if interactive {
             self.interactive = true
             let waitForCompleteJS = "window.addEventListener('load',function() { var iframe = document.createElement('iframe'); iframe.style.display = 'none'; iframe.src = '\(webView.request?.mainDocumentURL?.scheme)://\(webView.request?.mainDocumentURL?.host)\(completePRCURLPath)'; document.body.appendChild(iframe);  }, false);"
             webView.stringByEvaluatingJavaScriptFromString(waitForCompleteJS)
         }
         
-        var isNotRedirect: Bool
-        if let _currentUrl = currentUrl {
-            if _currentUrl == webView.request?.mainDocumentURL {
-                isNotRedirect = true
-            } else {
-                isNotRedirect = false
-            }
+        let isNotRedirect: Bool
+        if let currentUrl = currentUrl {
+            isNotRedirect = currentUrl == webView.request?.mainDocumentURL
         } else {
             isNotRedirect = false
         }
         
-        var complete = readyState == "complete"
+        let complete = readyState == "complete"
         if complete && isNotRedirect {
             completeProgress()
         }
     }
     
-    func webView(webView: UIWebView, didFailLoadWithError error: NSError) {
+    func webView(webView: UIWebView, didFailLoadWithError error: NSError?) {
         if webViewProxyDelegate!.respondsToSelector("webView:didFailLoadWithError:") {
             webViewProxyDelegate!.webView!(webView, didFailLoadWithError: error)
         }
         
         loadingCount = loadingCount - 1
-        // incrementProgress()
+        incrementProgress()
         
         let readyState = webView.stringByEvaluatingJavaScriptFromString("document.readyState")
         
-        var interactive = readyState == "interactive"
+        let interactive = readyState == "interactive"
         if interactive {
             self.interactive = true
             let waitForCompleteJS = "window.addEventListener('load',function() { var iframe = document.createElement('iframe'); iframe.style.display = 'none'; iframe.src = '\(webView.request?.mainDocumentURL?.scheme)://\(webView.request?.mainDocumentURL?.host)\(completePRCURLPath)'; document.body.appendChild(iframe);  }, false);"
             webView.stringByEvaluatingJavaScriptFromString(waitForCompleteJS)
         }
         
-        var isNotRedirect: Bool
-        if let _currentUrl = currentUrl {
-            if _currentUrl == webView.request?.mainDocumentURL {
-                isNotRedirect = true
-            } else {
-                isNotRedirect = false
-            }
+        let isNotRedirect: Bool
+        if let currentUrl = currentUrl {
+            isNotRedirect = currentUrl == webView.request?.mainDocumentURL
         } else {
             isNotRedirect = false
         }
         
-        var complete = readyState == "complete"
+        let complete = readyState == "complete"
         if complete && isNotRedirect {
             completeProgress()
         }

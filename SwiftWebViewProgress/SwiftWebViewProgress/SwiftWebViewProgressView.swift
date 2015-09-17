@@ -22,7 +22,7 @@ class WebViewProgressView: UIView {
         configureViews()
     }
 
-    required init(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
@@ -36,7 +36,7 @@ class WebViewProgressView: UIView {
         self.userInteractionEnabled = false
         self.autoresizingMask = .FlexibleWidth
         progressBarView = UIView(frame: self.bounds)
-        progressBarView.autoresizingMask = .FlexibleWidth | .FlexibleHeight
+        progressBarView.autoresizingMask = [.FlexibleWidth, .FlexibleHeight]
         var tintColor = UIColor(red: 22/255, green: 126/255, blue: 251/255, alpha: 1.0)
         if let color = UIApplication.sharedApplication().delegate?.window??.tintColor {
             tintColor = color
@@ -51,7 +51,7 @@ class WebViewProgressView: UIView {
     
     // MARK: Public Method
     func setProgress(progress: Float, animated: Bool = false) {
-        var isGrowing = progress > 0.0
+        let isGrowing = progress > 0.0
         UIView.animateWithDuration((isGrowing && animated) ? barAnimationDuration : 0.0, delay: 0.0, options: .CurveEaseInOut, animations: {
             var frame = self.progressBarView.frame
             frame.size.width = CGFloat(progress) * self.bounds.size.width

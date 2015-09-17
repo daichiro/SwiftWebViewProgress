@@ -157,6 +157,8 @@
 		421ED56F1A2F563A00C057B4 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftMigration = 0700;
+				LastSwiftUpdateCheck = 0700;
 				LastUpgradeCheck = 0610;
 				ORGANIZATIONNAME = MokuMokuCloud;
 				TargetAttributes = {
