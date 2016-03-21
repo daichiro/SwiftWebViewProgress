@@ -8,7 +8,7 @@
 
 import UIKit
 
-class WebViewProgressView: UIView {
+public class WebViewProgressView: UIView {
     
     var progress: Float = 0.0
     var progressBarView: UIView!
@@ -22,11 +22,11 @@ class WebViewProgressView: UIView {
         configureViews()
     }
 
-    required init?(coder aDecoder: NSCoder) {
+    required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
     
-    override func awakeFromNib() {
+    override public func awakeFromNib() {
         super.awakeFromNib()
         configureViews()
     }
@@ -50,7 +50,7 @@ class WebViewProgressView: UIView {
     }
     
     // MARK: Public Method
-    func setProgress(progress: Float, animated: Bool = false) {
+    public func setProgress(progress: Float, animated: Bool = false) {
         let isGrowing = progress > 0.0
         UIView.animateWithDuration((isGrowing && animated) ? barAnimationDuration : 0.0, delay: 0.0, options: .CurveEaseInOut, animations: {
             var frame = self.progressBarView.frame
