@@ -1,7 +1,7 @@
 # SwiftWebViewProgress
-[![Version](https://img.shields.io/cocoapods/v/RxWebKit.svg?style=flat)](http://cocoapods.org/pods/SwiftWebViewProgress)
-[![License](https://img.shields.io/cocoapods/l/RxWebKit.svg?style=flat)](http://cocoapods.org/pods/SwiftWebViewProgress)
-[![Platform](https://img.shields.io/cocoapods/p/RxWebKit.svg?style=flat)](http://cocoapods.org/pods/SwiftWebViewProgress)
+[![Version](https://img.shields.io/cocoapods/v/SwiftWebViewProgress.svg?style=flat)](http://cocoapods.org/pods/SwiftWebViewProgress)
+[![License](https://img.shields.io/cocoapods/l/SwiftWebViewProgress.svg?style=flat)](http://cocoapods.org/pods/SwiftWebViewProgress)
+[![Platform](https://img.shields.io/cocoapods/p/SwiftWebViewProgress.svg?style=flat)](http://cocoapods.org/pods/SwiftWebViewProgress)
 
 _This is WIP Project._
 
