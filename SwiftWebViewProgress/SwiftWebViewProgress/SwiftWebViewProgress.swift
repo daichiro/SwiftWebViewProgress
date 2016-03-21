@@ -12,7 +12,7 @@ protocol WebViewProgressDelegate {
     func webViewProgress(webViewProgress: WebViewProgress, updateProgress progress: Float)
 }
 
-class WebViewProgress: NSObject, UIWebViewDelegate {
+class WebViewProgress: NSObject {
     
     var progressDelegate: WebViewProgressDelegate?
     var webViewProxyDelegate: UIWebViewDelegate?
@@ -73,7 +73,9 @@ class WebViewProgress: NSObject, UIWebViewDelegate {
         setProgress(0.0)
     }
     
-    // MARK: - UIWebViewDelegate
+}
+
+extension WebViewProgress: UIWebViewDelegate {
     func webView(webView: UIWebView, shouldStartLoadWithRequest request: NSURLRequest, navigationType: UIWebViewNavigationType) -> Bool {
         guard let url = request.URL else {
             return false
