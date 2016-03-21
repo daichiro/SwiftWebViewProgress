@@ -15,6 +15,12 @@ This is nearly porting NJKWebViewProgress to Swift.
 - Xcode7 GM or later (Swift 2.0)
 
 ## Install
+Via CocoaPods:
+- Add `pod SwftWebViewProgress` to your Podfile
+- run `pod install` on command-line
+ 
+Or:
+
 - import `SwiftWebViewProgress.swift` in your Project.
 - (Optionally, import `SwiftWebViewProgressView.swift`
 
