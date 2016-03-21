@@ -1,15 +1,17 @@
 # SwiftWebViewProgress
+[![Version](https://img.shields.io/cocoapods/v/RxWebKit.svg?style=flat)](http://cocoapods.org/pods/SwiftWebViewProgress)
+[![License](https://img.shields.io/cocoapods/l/RxWebKit.svg?style=flat)](http://cocoapods.org/pods/SwiftWebViewProgress)
+[![Platform](https://img.shields.io/cocoapods/p/RxWebKit.svg?style=flat)](http://cocoapods.org/pods/SwiftWebViewProgress)
+
 _This is WIP Project._
 
 SwiftWebViewProgress is a progress interface library for UIWebView.
-WKWebView has progress interface but it can only use iOS8 or later.
-This is available for iOS7 or later.
 
 This is nearly porting NJKWebViewProgress to Swift.
 - see: https://github.com/ninjinkun/NJKWebViewProgress
 
 ## Requirements
-- iOS7 or later
+- iOS8 or later
 - Xcode7 GM or later (Swift 2.0)
 
 ## Install

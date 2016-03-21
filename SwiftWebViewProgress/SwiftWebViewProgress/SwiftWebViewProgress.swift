@@ -8,15 +8,15 @@
 
 import UIKit
 
-protocol WebViewProgressDelegate {
+public protocol WebViewProgressDelegate {
     func webViewProgress(webViewProgress: WebViewProgress, updateProgress progress: Float)
 }
 
-class WebViewProgress: NSObject, UIWebViewDelegate {
+public class WebViewProgress: NSObject {
     
-    var progressDelegate: WebViewProgressDelegate?
-    var webViewProxyDelegate: UIWebViewDelegate?
-    var progress: Float = 0.0
+    public var progressDelegate: WebViewProgressDelegate?
+    public var webViewProxyDelegate: UIWebViewDelegate?
+    public var progress: Float = 0.0
     
     private var loadingCount: Int!
     private var maxLoadCount: Int!
@@ -66,15 +66,17 @@ class WebViewProgress: NSObject, UIWebViewDelegate {
     }
     
     // MARK: Public Method
-    func reset() {
+    public func reset() {
         maxLoadCount = 0
         loadingCount = 0
         interactive = false
         setProgress(0.0)
     }
     
-    // MARK: - UIWebViewDelegate
-    func webView(webView: UIWebView, shouldStartLoadWithRequest request: NSURLRequest, navigationType: UIWebViewNavigationType) -> Bool {
+}
+
+extension WebViewProgress: UIWebViewDelegate {
+    public func webView(webView: UIWebView, shouldStartLoadWithRequest request: NSURLRequest, navigationType: UIWebViewNavigationType) -> Bool {
         guard let url = request.URL else {
             return false
         }
@@ -103,7 +105,7 @@ class WebViewProgress: NSObject, UIWebViewDelegate {
         return ret
     }
     
-    func webViewDidStartLoad(webView: UIWebView) {
+    public func webViewDidStartLoad(webView: UIWebView) {
         if webViewProxyDelegate!.respondsToSelector("webViewDidStartLoad:") {
             webViewProxyDelegate!.webViewDidStartLoad!(webView)
         }
@@ -113,7 +115,7 @@ class WebViewProgress: NSObject, UIWebViewDelegate {
         startProgress()
     }
     
-    func webViewDidFinishLoad(webView: UIWebView) {
+    public func webViewDidFinishLoad(webView: UIWebView) {
         if webViewProxyDelegate!.respondsToSelector("webViewDidFinishLoad:") {
             webViewProxyDelegate!.webViewDidFinishLoad!(webView)
         }
@@ -143,7 +145,7 @@ class WebViewProgress: NSObject, UIWebViewDelegate {
         }
     }
     
-    func webView(webView: UIWebView, didFailLoadWithError error: NSError?) {
+    public func webView(webView: UIWebView, didFailLoadWithError error: NSError?) {
         if webViewProxyDelegate!.respondsToSelector("webView:didFailLoadWithError:") {
             webViewProxyDelegate!.webView!(webView, didFailLoadWithError: error)
         }
