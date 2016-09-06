@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "SwiftWebViewProgress"
-  s.version      = "0.1.0"
+  s.version      = "0.1.1"
   s.summary      = "UIWebView progress interface library for Swift"
   s.description  = <<-DESC
 This is WIP Project.
