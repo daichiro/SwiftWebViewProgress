@@ -9,7 +9,7 @@
 import UIKit
 
 public protocol WebViewProgressDelegate {
-    func webViewProgress(webViewProgress: WebViewProgress, updateProgress progress: Float)
+    func webViewProgress(_ webViewProgress: WebViewProgress, updateProgress progress: Float)
 }
 
 public class WebViewProgress: NSObject {
@@ -18,15 +18,15 @@ public class WebViewProgress: NSObject {
     public var webViewProxyDelegate: UIWebViewDelegate?
     public var progress: Float = 0.0
 
-    private var loadingCount: Int!
-    private var maxLoadCount: Int!
-    private var currentUrl: NSURL?
-    private var interactive: Bool!
+    fileprivate var loadingCount: Int!
+    fileprivate var maxLoadCount: Int!
+    fileprivate var currentUrl: URL?
+    fileprivate var interactive: Bool!
 
     private let InitialProgressValue: Float = 0.1
     private let InteractiveProgressValue: Float = 0.5
     private let FinalProgressValue: Float = 0.9
-    private let completePRCURLPath = "/webviewprogressproxy/complete"
+    fileprivate let completePRCURLPath = "/webviewprogressproxy/complete"
 
     // MARK: Initializer
     override public init() {
@@ -37,13 +37,13 @@ public class WebViewProgress: NSObject {
     }
 
     // MARK: Private Method
-    private func startProgress() {
+    fileprivate func startProgress() {
         if progress < InitialProgressValue {
             setProgress(InitialProgressValue)
         }
     }
 
-    private func incrementProgress() {
+    fileprivate func incrementProgress() {
         var progress = self.progress
         let maxProgress = interactive == true ? FinalProgressValue : InteractiveProgressValue
         let remainPercent = Float(Float(loadingCount) / Float(maxLoadCount))
@@ -53,11 +53,11 @@ public class WebViewProgress: NSObject {
         setProgress(progress)
     }
 
-    private func completeProgress() {
+    fileprivate func completeProgress() {
         setProgress(1.0)
     }
 
-    private func setProgress(progress: Float) {
+    fileprivate func setProgress(_ progress: Float) {
         guard progress > self.progress || progress == 0 else {
             return
         }
@@ -76,8 +76,8 @@ public class WebViewProgress: NSObject {
 }
 
 extension WebViewProgress: UIWebViewDelegate {
-    public func webView(webView: UIWebView, shouldStartLoadWithRequest request: NSURLRequest, navigationType: UIWebViewNavigationType) -> Bool {
-        guard let url = request.URL else {
+    public func webView(_ webView: UIWebView, shouldStartLoadWith request: URLRequest, navigationType: UIWebViewNavigationType) -> Bool {
+        guard let url = request.url else {
             return false
         }
         if url.path == completePRCURLPath {
@@ -86,27 +86,27 @@ extension WebViewProgress: UIWebViewDelegate {
         }
 
         var ret = true
-        if webViewProxyDelegate!.respondsToSelector("webView:shouldStartLoadWithRequest:navigationType:") {
-            ret = webViewProxyDelegate!.webView!(webView, shouldStartLoadWithRequest: request, navigationType: navigationType)
+        if webViewProxyDelegate!.responds(to: #selector(UIWebViewDelegate.webView(_:shouldStartLoadWith:navigationType:))) {
+            ret = webViewProxyDelegate!.webView!(webView, shouldStartLoadWith: request, navigationType: navigationType)
         }
 
         var isFragmentJump = false
         if let fragmentURL = url.fragment {
-            let nonFragmentURL = url.absoluteString.stringByReplacingOccurrencesOfString("#"+fragmentURL, withString: "")
-            isFragmentJump = nonFragmentURL == webView.request!.URL!.absoluteString
+            let nonFragmentURL = url.absoluteString.replacingOccurrences(of: "#"+fragmentURL, with: "")
+            isFragmentJump = nonFragmentURL == webView.request!.url!.absoluteString
         }
 
-        let isTopLevelNavigation = request.mainDocumentURL! == request.URL
+        let isTopLevelNavigation = request.mainDocumentURL! == request.url
         let isHTTP = url.scheme == "http" || url.scheme == "https"
         if ret && !isFragmentJump && isHTTP && isTopLevelNavigation {
-            currentUrl = request.URL
+            currentUrl = request.url
             reset()
         }
         return ret
     }
 
-    public func webViewDidStartLoad(webView: UIWebView) {
-        if webViewProxyDelegate!.respondsToSelector("webViewDidStartLoad:") {
+    public func webViewDidStartLoad(_ webView: UIWebView) {
+        if webViewProxyDelegate!.responds(to: #selector(UIWebViewDelegate.webViewDidStartLoad(_:))) {
             webViewProxyDelegate!.webViewDidStartLoad!(webView)
         }
 
@@ -115,21 +115,21 @@ extension WebViewProgress: UIWebViewDelegate {
         startProgress()
     }
 
-    public func webViewDidFinishLoad(webView: UIWebView) {
-        if webViewProxyDelegate!.respondsToSelector("webViewDidFinishLoad:") {
+    public func webViewDidFinishLoad(_ webView: UIWebView) {
+        if webViewProxyDelegate!.responds(to: #selector(UIWebViewDelegate.webViewDidFinishLoad(_:))) {
             webViewProxyDelegate!.webViewDidFinishLoad!(webView)
         }
 
         loadingCount = loadingCount - 1
         incrementProgress()
 
-        let readyState = webView.stringByEvaluatingJavaScriptFromString("document.readyState")
+        let readyState = webView.stringByEvaluatingJavaScript(from: "document.readyState")
 
         let interactive = readyState == "interactive"
         if interactive {
             self.interactive = true
             let waitForCompleteJS = "window.addEventListener('load',function() { var iframe = document.createElement('iframe'); iframe.style.display = 'none'; iframe.src = '\(webView.request?.mainDocumentURL?.scheme)://\(webView.request?.mainDocumentURL?.host)\(completePRCURLPath)'; document.body.appendChild(iframe);  }, false);"
-            webView.stringByEvaluatingJavaScriptFromString(waitForCompleteJS)
+            webView.stringByEvaluatingJavaScript(from: waitForCompleteJS)
         }
 
         let isNotRedirect: Bool
@@ -145,21 +145,21 @@ extension WebViewProgress: UIWebViewDelegate {
         }
     }
 
-    public func webView(webView: UIWebView, didFailLoadWithError error: NSError?) {
-        if webViewProxyDelegate!.respondsToSelector("webView:didFailLoadWithError:") {
+    public func webView(_ webView: UIWebView, didFailLoadWithError error: Error) {
+        if webViewProxyDelegate!.responds(to: #selector(UIWebViewDelegate.webView(_:didFailLoadWithError:))) {
             webViewProxyDelegate!.webView!(webView, didFailLoadWithError: error)
         }
 
         loadingCount = loadingCount - 1
         incrementProgress()
 
-        let readyState = webView.stringByEvaluatingJavaScriptFromString("document.readyState")
+        let readyState = webView.stringByEvaluatingJavaScript(from: "document.readyState")
 
         let interactive = readyState == "interactive"
         if interactive {
             self.interactive = true
             let waitForCompleteJS = "window.addEventListener('load',function() { var iframe = document.createElement('iframe'); iframe.style.display = 'none'; iframe.src = '\(webView.request?.mainDocumentURL?.scheme)://\(webView.request?.mainDocumentURL?.host)\(completePRCURLPath)'; document.body.appendChild(iframe);  }, false);"
-            webView.stringByEvaluatingJavaScriptFromString(waitForCompleteJS)
+            webView.stringByEvaluatingJavaScript(from: waitForCompleteJS)
         }
 
         let isNotRedirect: Bool
