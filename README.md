@@ -12,7 +12,7 @@ This is nearly porting NJKWebViewProgress to Swift.
 
 ## Requirements
 - iOS8 or later
-- Xcode7 GM or later (Swift 2.0)
+- Xcode8 or later (Swift 3.0)
 
 ## Install
 Via CocoaPods:
