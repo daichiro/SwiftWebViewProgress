@@ -29,7 +29,7 @@ class ViewController: UIViewController, UIWebViewDelegate, WebViewProgressDelega
         let navigationBarBounds = self.navigationController!.navigationBar.bounds
         let barFrame = CGRect(x: 0, y: navigationBarBounds.size.height - progressBarHeight, width: navigationBarBounds.width, height: progressBarHeight)
         progressView = WebViewProgressView(frame: barFrame)
-        progressView.autoresizingMask = [.FlexibleWidth, .FlexibleTopMargin]
+        progressView.autoresizingMask = [.flexibleWidth, .flexibleTopMargin]
         
         loadApple()
     }
@@ -39,19 +39,19 @@ class ViewController: UIViewController, UIWebViewDelegate, WebViewProgressDelega
         // Dispose of any resources that can be recreated.
     }
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.navigationController!.navigationBar.addSubview(progressView)
     }
     
     // MARK: Private Method
-    private func loadApple() {
-        let request = NSURLRequest(URL: NSURL(string: "http://apple.com")!)
+    fileprivate func loadApple() {
+        let request = URLRequest(url: URL(string: "http://apple.com")!)
         webView.loadRequest(request)
     }
     
     // MARK: - WebViewProgressDelegate
-    func webViewProgress(webViewProgress: WebViewProgress, updateProgress progress: Float) {
+    func webViewProgress(_ webViewProgress: WebViewProgress, updateProgress progress: Float) {
         progressView.setProgress(progress, animated: true)
     }
 }
