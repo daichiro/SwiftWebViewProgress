@@ -132,7 +132,7 @@ extension WebViewProgress: UIWebViewDelegate {
         let interactive = readyState == "interactive"
         if interactive {
             self.interactive = true
-            let waitForCompleteJS = "window.addEventListener('load',function() { var iframe = document.createElement('iframe'); iframe.style.display = 'none'; iframe.src = '\(webView.request?.mainDocumentURL?.scheme)://\(webView.request?.mainDocumentURL?.host)\(completePRCURLPath)'; document.body.appendChild(iframe);  }, false);"
+            let waitForCompleteJS = "window.addEventListener('load',function() { var iframe = document.createElement('iframe'); iframe.style.display = 'none'; iframe.src = '\(String(describing: webView.request?.mainDocumentURL?.scheme))://\(String(describing: webView.request?.mainDocumentURL?.host))\(completePRCURLPath)'; document.body.appendChild(iframe);  }, false);"
             webView.stringByEvaluatingJavaScript(from: waitForCompleteJS)
         }
 
@@ -164,7 +164,7 @@ extension WebViewProgress: UIWebViewDelegate {
         let interactive = readyState == "interactive"
         if interactive {
             self.interactive = true
-            let waitForCompleteJS = "window.addEventListener('load',function() { var iframe = document.createElement('iframe'); iframe.style.display = 'none'; iframe.src = '\(webView.request?.mainDocumentURL?.scheme)://\(webView.request?.mainDocumentURL?.host)\(completePRCURLPath)'; document.body.appendChild(iframe);  }, false);"
+            let waitForCompleteJS = "window.addEventListener('load',function() { var iframe = document.createElement('iframe'); iframe.style.display = 'none'; iframe.src = '\(String(describing: webView.request?.mainDocumentURL?.scheme))://\(String(describing: webView.request?.mainDocumentURL?.host))\(completePRCURLPath)'; document.body.appendChild(iframe);  }, false);"
             webView.stringByEvaluatingJavaScript(from: waitForCompleteJS)
         }
 
