@@ -18,10 +18,10 @@ public class WebViewProgress: NSObject {
     public var webViewProxyDelegate: UIWebViewDelegate?
     public var progress: Float = 0.0
 
-    fileprivate var loadingCount: Int!
-    fileprivate var maxLoadCount: Int!
+    fileprivate var loadingCount: Int?
+    fileprivate var maxLoadCount: Int?
     fileprivate var currentUrl: URL?
-    fileprivate var interactive: Bool!
+    fileprivate var interactive: Bool?
 
     private let InitialProgressValue: Float = 0.1
     private let InteractiveProgressValue: Float = 0.5
@@ -46,7 +46,7 @@ public class WebViewProgress: NSObject {
     fileprivate func incrementProgress() {
         var progress = self.progress
         let maxProgress = interactive == true ? FinalProgressValue : InteractiveProgressValue
-        let remainPercent = Float(Float(loadingCount) / Float(maxLoadCount))
+        let remainPercent = Float(Float(loadingCount ?? 0) / Float(maxLoadCount ?? 1))
         let increment = (maxProgress - progress) * remainPercent
         progress += increment
         progress = fmin(progress, maxProgress)
@@ -87,16 +87,16 @@ extension WebViewProgress: UIWebViewDelegate {
 
         var ret = true
         if webViewProxyDelegate!.responds(to: #selector(UIWebViewDelegate.webView(_:shouldStartLoadWith:navigationType:))) {
-            ret = webViewProxyDelegate!.webView!(webView, shouldStartLoadWith: request, navigationType: navigationType)
+            ret = webViewProxyDelegate?.webView?(webView, shouldStartLoadWith: request, navigationType: navigationType) ?? false
         }
 
         var isFragmentJump = false
         if let fragmentURL = url.fragment {
             let nonFragmentURL = url.absoluteString.replacingOccurrences(of: "#"+fragmentURL, with: "")
-            isFragmentJump = nonFragmentURL == webView.request!.url!.absoluteString
+            isFragmentJump = nonFragmentURL == url.absoluteString
         }
 
-        let isTopLevelNavigation = request.mainDocumentURL! == request.url
+        let isTopLevelNavigation = request.mainDocumentURL == url
         let isHTTP = url.scheme == "http" || url.scheme == "https"
         if ret && !isFragmentJump && isHTTP && isTopLevelNavigation {
             currentUrl = request.url
@@ -106,21 +106,25 @@ extension WebViewProgress: UIWebViewDelegate {
     }
 
     public func webViewDidStartLoad(_ webView: UIWebView) {
-        if webViewProxyDelegate!.responds(to: #selector(UIWebViewDelegate.webViewDidStartLoad(_:))) {
-            webViewProxyDelegate!.webViewDidStartLoad!(webView)
+        if webViewProxyDelegate?.responds(to: #selector(UIWebViewDelegate.webViewDidStartLoad(_:))) == true {
+            webViewProxyDelegate?.webViewDidStartLoad?(webView)
         }
 
-        loadingCount = loadingCount + 1
-        maxLoadCount = Int(fmax(Double(maxLoadCount), Double(loadingCount)))
+        if let loadingCount = loadingCount {
+            self.loadingCount = loadingCount + 1
+        }
+        maxLoadCount = Int(fmax(Double(maxLoadCount ?? 0), Double(loadingCount ?? 0)))
         startProgress()
     }
 
     public func webViewDidFinishLoad(_ webView: UIWebView) {
-        if webViewProxyDelegate!.responds(to: #selector(UIWebViewDelegate.webViewDidFinishLoad(_:))) {
-            webViewProxyDelegate!.webViewDidFinishLoad!(webView)
+        if webViewProxyDelegate?.responds(to: #selector(UIWebViewDelegate.webViewDidFinishLoad(_:))) == true {
+            webViewProxyDelegate?.webViewDidFinishLoad?(webView)
         }
 
-        loadingCount = loadingCount - 1
+        if let loadingCount = loadingCount {
+            self.loadingCount = loadingCount - 1
+        }
         incrementProgress()
 
         let readyState = webView.stringByEvaluatingJavaScript(from: "document.readyState")
@@ -146,11 +150,13 @@ extension WebViewProgress: UIWebViewDelegate {
     }
 
     public func webView(_ webView: UIWebView, didFailLoadWithError error: Error) {
-        if webViewProxyDelegate!.responds(to: #selector(UIWebViewDelegate.webView(_:didFailLoadWithError:))) {
-            webViewProxyDelegate!.webView!(webView, didFailLoadWithError: error)
+        if webViewProxyDelegate?.responds(to: #selector(UIWebViewDelegate.webView(_:didFailLoadWithError:))) == true {
+            webViewProxyDelegate?.webView?(webView, didFailLoadWithError: error)
         }
 
-        loadingCount = loadingCount - 1
+        if let loadingCount = loadingCount {
+            self.loadingCount = loadingCount - 1
+        }
         incrementProgress()
 
         let readyState = webView.stringByEvaluatingJavaScript(from: "document.readyState")
