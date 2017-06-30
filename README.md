@@ -16,7 +16,7 @@ This is nearly porting NJKWebViewProgress to Swift.
 
 ## Install
 Via CocoaPods:
-- Add `pod SwftWebViewProgress` to your Podfile
+- Add `pod SwiftWebViewProgress` to your Podfile
 - run `pod install` on command-line
  
 Or:
